@@ -1,0 +1,10 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# fetch-emails läuft automatisch alle 10 Minuten und holt neue Kunden-Mails ab
+[functions."fetch-emails"]
+  schedule = "*/10 * * * *"

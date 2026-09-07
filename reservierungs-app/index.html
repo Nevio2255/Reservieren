@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LuxeFinds · Verwaltung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <div class="login-mark">LuxeFinds</div>
+      <div class="login-sub">Verwaltung</div>
+
+      <!-- Schritt: Anmelden -->
+      <form id="login-form" class="auth-step">
+        <label>Zugangscode
+          <input type="text" id="login-code" required autocomplete="username" />
+        </label>
+        <label>Passwort
+          <input type="password" id="login-password" required autocomplete="current-password" />
+        </label>
+        <button type="submit" class="btn-primary" id="login-btn">Anmelden</button>
+        <p id="login-error" class="error-text"></p>
+        <div class="auth-links">
+          <button type="button" class="link-btn" data-goto="setup-step">Erstes Mal hier? Passwort festlegen</button>
+          <button type="button" class="link-btn" data-goto="forgot-step">Passwort vergessen?</button>
+        </div>
+      </form>
+
+      <!-- Schritt: Erstmaliges Passwort festlegen -->
+      <form id="setup-form" class="auth-step hidden">
+        <label>Zugangscode (vom Chef erhalten)
+          <input type="text" id="setup-code" required />
+        </label>
+        <label>Neues Passwort (min. 8 Zeichen)
+          <input type="password" id="setup-password" required minlength="8" />
+        </label>
+        <button type="submit" class="btn-primary" id="setup-btn">Passwort festlegen</button>
+        <p id="setup-error" class="error-text"></p>
+        <div class="auth-links">
+          <button type="button" class="link-btn" data-goto="login-step">Zurück zum Login</button>
+        </div>
+      </form>
+
+      <!-- Schritt: Passwort vergessen — Code anfordern -->
+      <form id="forgot-form" class="auth-step hidden">
+        <label>Zugangscode
+          <input type="text" id="forgot-code" required />
+        </label>
+        <button type="submit" class="btn-primary" id="forgot-btn">Code anfordern</button>
+        <p id="forgot-error" class="error-text"></p>
+        <p id="forgot-success" class="success-text"></p>
+        <div class="auth-links">
+          <button type="button" class="link-btn" data-goto="reset-step">Ich habe schon einen Code</button>
+          <button type="button" class="link-btn" data-goto="login-step">Zurück zum Login</button>
+        </div>
+      </form>
+
+      <!-- Schritt: Passwort mit Reset-Code zurücksetzen -->
+      <form id="reset-form" class="auth-step hidden">
+        <label>Zugangscode
+          <input type="text" id="reset-code-input" required />
+        </label>
+        <label>Code vom Chef
+          <input type="text" id="reset-code" required />
+        </label>
+        <label>Neues Passwort (min. 8 Zeichen)
+          <input type="password" id="reset-password" required minlength="8" />
+        </label>
+        <button type="submit" class="btn-primary" id="reset-btn">Passwort ändern</button>
+        <p id="reset-error" class="error-text"></p>
+        <div class="auth-links">
+          <button type="button" class="link-btn" data-goto="login-step">Zurück zum Login</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-name">LuxeFinds</span>
+        <span class="brand-sub">Verwaltung</span>
+      </div>
+      <nav>
+        <button class="nav-item active" data-view="reservations">Reservierungen</button>
+        <button class="nav-item" data-view="inbox">
+          Posteingang
+          <span id="inbox-badge" class="badge hidden">0</span>
+        </button>
+        <button class="nav-item" data-view="employees" id="nav-employees">
+          Mitarbeiter
+          <span id="reset-badge" class="badge hidden">0</span>
+        </button>
+        <button class="nav-item" data-view="profile">Mein Profil</button>
+      </nav>
+      <div class="sidebar-footer">
+        <span id="current-user"></span>
+        <button id="logout-btn" class="link-btn">Abmelden</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- Reservierungen -->
+      <section id="view-reservations" class="view">
+        <header class="view-header">
+          <div>
+            <h1>Reservierungen</h1>
+            <p class="muted" id="res-count"></p>
+          </div>
+          <div class="view-actions">
+            <input type="text" id="search-input" placeholder="Suche: Name, Nummer, Produkt…" class="search-input" />
+            <button id="new-reservation-btn" class="btn-primary">+ Neue Reservierung</button>
+          </div>
+        </header>
+
+        <div class="table-wrap">
+          <table class="res-table">
+            <thead>
+              <tr>
+                <th>Nr.</th>
+                <th>Produkt</th>
+                <th>Kunde</th>
+                <th>Kontakt</th>
+                <th>Stück</th>
+                <th>Preis</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="res-table-body"></tbody>
+          </table>
+          <p id="res-empty" class="empty-state hidden">Noch keine Reservierungen erfasst.</p>
+        </div>
+      </section>
+
+      <!-- Posteingang: Mails ohne Zuordnung -->
+      <section id="view-inbox" class="view hidden">
+        <header class="view-header">
+          <div>
+            <h1>Posteingang</h1>
+            <p class="muted">E-Mails, die keiner Reservierung zugeordnet werden konnten</p>
+          </div>
+        </header>
+        <div id="inbox-list" class="inbox-list"></div>
+        <p id="inbox-empty" class="empty-state hidden">Keine unzugeordneten E-Mails.</p>
+      </section>
+
+      <!-- Mitarbeiterverwaltung (nur Owner) -->
+      <section id="view-employees" class="view hidden">
+        <header class="view-header">
+          <div>
+            <h1>Mitarbeiter</h1>
+            <p class="muted">Zugangscodes, Löhne und Passwort-Anfragen verwalten</p>
+          </div>
+          <div class="view-actions">
+            <button id="new-employee-btn" class="btn-primary">+ Mitarbeiter anlegen</button>
+          </div>
+        </header>
+
+        <div id="reset-requests-box" class="reset-requests-box hidden">
+          <h3>Offene Passwort-Anfragen</h3>
+          <div id="reset-requests-list"></div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="res-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Rolle</th>
+                <th>Lohn</th>
+                <th>Konto</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="employees-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Mein Profil -->
+      <section id="view-profile" class="view hidden">
+        <header class="view-header">
+          <div><h1>Mein Profil</h1></div>
+        </header>
+        <div id="profile-content" class="profile-box"></div>
+      </section>
+    </main>
+
+    <!-- Detail-Panel für eine Reservierung -->
+    <div id="detail-overlay" class="overlay hidden">
+      <div class="detail-panel">
+        <button id="detail-close" class="panel-close">✕</button>
+        <div id="detail-content"></div>
+      </div>
+    </div>
+
+    <!-- Modal: Neue Reservierung -->
+    <div id="new-res-overlay" class="overlay hidden">
+      <div class="modal">
+        <h2>Neue Reservierung</h2>
+        <form id="new-res-form">
+          <label>Produkt <input type="text" name="product" required /></label>
+          <label>Reservierungsnummer <input type="text" name="reservation_number" required /></label>
+          <label>Name des Kunden <input type="text" name="customer_name" required /></label>
+          <label>E-Mail <input type="email" name="customer_email" required /></label>
+          <label>Telefonnummer <input type="tel" name="customer_phone" /></label>
+          <div class="form-row">
+            <label>Stückzahl <input type="number" name="quantity" min="1" value="1" required /></label>
+            <label>Preis (€) <input type="number" name="price" min="0" step="0.01" required /></label>
+          </div>
+          <label>Notiz <textarea name="notes" rows="2"></textarea></label>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="new-res-cancel">Abbrechen</button>
+            <button type="submit" class="btn-primary">Speichern</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Neuen Mitarbeiter anlegen -->
+    <div id="new-emp-overlay" class="overlay hidden">
+      <div class="modal">
+        <h2>Mitarbeiter anlegen</h2>
+        <form id="new-emp-form">
+          <label>Zugangscode <input type="text" name="employee_code" required /></label>
+          <label>Name <input type="text" name="name" required /></label>
+          <label>Lohn (€) <input type="number" name="salary" min="0" step="0.01" /></label>
+          <p class="muted" style="font-size:12px;">
+            Gib den Zugangscode danach persönlich an den Mitarbeiter weiter — er legt sein
+            eigenes Passwort über „Erstes Mal hier?“ auf der Login-Seite fest.
+          </p>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="new-emp-cancel">Abbrechen</button>
+            <button type="submit" class="btn-primary">Anlegen</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
