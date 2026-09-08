@@ -29,6 +29,9 @@ exports.handler = async (event) => {
     .select()
     .single();
 
-  if (error) return json(500, { error: 'Chat konnte nicht erstellt werden.' });
+  if (error) {
+    console.error('Chat-Erstellen-Fehler:', error);
+    return json(500, { error: 'Chat konnte nicht erstellt werden: ' + error.message });
+  }
   return json(200, { token: created.token, chatId: created.id, reused: false });
 };
