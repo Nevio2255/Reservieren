@@ -46,8 +46,9 @@ exports.handler = async (event) => {
     });
 
     if (error) {
+      console.error('Anlegen-Fehler:', error);
       if (error.code === '23505') return json(409, { error: 'Dieser Zugangscode ist schon vergeben.' });
-      return json(500, { error: 'Anlegen fehlgeschlagen.' });
+      return json(500, { error: 'Anlegen fehlgeschlagen: ' + error.message });
     }
     return json(200, { success: true });
   }
@@ -66,7 +67,10 @@ exports.handler = async (event) => {
     if (Object.keys(updates).length === 0) return json(400, { error: 'Nichts zu ändern.' });
 
     const { error } = await supabaseAdmin.from('employees').update(updates).eq('id', id);
-    if (error) return json(500, { error: 'Speichern fehlgeschlagen.' });
+    if (error) {
+      console.error('Bearbeiten-Fehler:', error);
+      return json(500, { error: 'Speichern fehlgeschlagen: ' + error.message });
+    }
     return json(200, { success: true });
   }
 
@@ -77,7 +81,10 @@ exports.handler = async (event) => {
     if (id === session.id) return json(400, { error: 'Du kannst dich nicht selbst löschen.' });
 
     const { error } = await supabaseAdmin.from('employees').delete().eq('id', id);
-    if (error) return json(500, { error: 'Löschen fehlgeschlagen.' });
+    if (error) {
+      console.error('Löschen-Fehler:', error);
+      return json(500, { error: 'Löschen fehlgeschlagen: ' + error.message });
+    }
     return json(200, { success: true });
   }
 
