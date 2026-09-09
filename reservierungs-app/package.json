@@ -1,0 +1,14 @@
+{
+  "name": "reservierungs-verwaltung",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Verwaltungsprogramm für Reservierungen mit E-Mail-Integration (web.de) und eigenem Mitarbeiter-Login",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "nodemailer": "^6.9.14",
+    "imapflow": "^1.0.167",
+    "mailparser": "^3.7.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
